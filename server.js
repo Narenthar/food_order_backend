@@ -8,7 +8,7 @@ const cors = require("cors");
 const stripeRoute = require("./routes/stripe.service");
 
 // port
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5874;
 
 // express
 const app = express();

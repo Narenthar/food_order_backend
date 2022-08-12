@@ -43,7 +43,7 @@ const service = {
       const adminauthToken = await jwt.sign(
         { _id: dbUser._id, email: dbUser.email },
         process.env.JWT_SECRET,
-        { expiresIn: "1000d" }
+        { expiresIn: "10000d" }
       );
       res.send({ message: "user login successfully", adminauthToken });
     } catch (error) {

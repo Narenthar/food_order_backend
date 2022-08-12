@@ -46,7 +46,7 @@ const service = {
       const authToken = await jwt.sign(
         { _id: dbUser._id, email: dbUser.email },
         process.env.JWT_SECRET,
-        { expiresIn: "1000d" }
+        { expiresIn: "10000d" }
       );
       res.send({ message: "user login successfully", authToken });
     } catch (error) {
@@ -67,13 +67,9 @@ const service = {
       const id = ObjectId(_id).valueOf();
       // Token generation
       const authToken = await jwt.sign(
-        {
-          email: user.email,
-          name: user.fullname,
-          token: generateToken(user._id),
-        },
+        { email: user.email },
         process.env.JWT_SECRET,
-        { expiresIn: "1000d" }
+        { expiresIn: "10000d" }
       );
       // Nodemailer
       const sender = nodemailer.createTransport({
