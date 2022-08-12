@@ -46,7 +46,7 @@ const service = {
       const authToken = await jwt.sign(
         { _id: dbUser._id, email: dbUser.email },
         process.env.JWT_SECRET,
-        { expiresIn: "8h" }
+        { expiresIn: "1000d" }
       );
       res.send({ message: "user login successfully", authToken });
     } catch (error) {
@@ -67,9 +67,13 @@ const service = {
       const id = ObjectId(_id).valueOf();
       // Token generation
       const authToken = await jwt.sign(
-        { email: user.email },
+        {
+          email: user.email,
+          name: user.fullname,
+          token: generateToken(user._id),
+        },
         process.env.JWT_SECRET,
-        { expiresIn: "3h" }
+        { expiresIn: "1000d" }
       );
       // Nodemailer
       const sender = nodemailer.createTransport({
@@ -124,52 +128,50 @@ const service = {
       res.status(500).send({ error: error.message });
     }
   },
-  async sendmail(req, res){
-
+  async sendmail(req, res) {
     let transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com", 
-        port: 587,
-        secure: false,
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
       auth: {
         user: process.env.USER,
-        pass: process.env.PASS 
+        pass: process.env.PASS,
       },
     });
 
-    var email = req.body.email
-    var message = req.body.message
-    var subject = req.body.subject
-    var name = req.body.name
+    var email = req.body.email;
+    var message = req.body.message;
+    var subject = req.body.subject;
+    var name = req.body.name;
 
     const mailOptions = {
-        from :  name,
-        to : email,
-        subject: subject,
-        html: `${name} <noreply@${name}.com> <br /><br /> ${message}`
-    }
+      from: name,
+      to: email,
+      subject: subject,
+      html: `${name} <noreply@${name}.com> <br /><br /> ${message}`,
+    };
 
     transporter.sendMail(mailOptions, (err, data) => {
-        if(err){
-            res.json({
-                status:"err"
-            }) 
-            console.log(err)
-            }
-            else {
-                res.json({
-                    status: "success"
-         })
-         console.log("Email Sent" + data.response)
-        }
-    })
-    transporter.verify(function(error, success) {
+      if (err) {
+        res.json({
+          status: "err",
+        });
+        console.log(err);
+      } else {
+        res.json({
+          status: "success",
+        });
+        console.log("Email Sent" + data.response);
+      }
+    });
+    transporter.verify(function (error, success) {
       if (error) {
         console.log(error);
       } else {
         console.log("Server is ready to take our messages!");
       }
     });
-  }
+  },
 };
 
 // export
